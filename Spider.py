@@ -23,4 +23,11 @@ cur.execute('''CREATE TABLE IF NOT EXISTS Links
 
 cur.execute('''CREATE TABLE IF NOT EXISTS Webs (url TEXT UNIQUE)''')
 
+# Checking if data base is not already created
+cur.execute('''Select id, url from Pages where html is null and error is null order by random() Limit 1''')
+row = cur.fetchone()
 
+if row is not None:
+    print("ReStarting Crawl: or Delete spider.sqlite to start fresh crawl")
+else:
+    
