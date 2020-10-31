@@ -42,4 +42,10 @@ else:
     if startUrl.endswith('.html') or startUrl.endswith('.htm'):
         pos = startUrl.rfind('/')
         web = startUrl[:pos]
-    print(web)
+
+    #print(web)
+
+    if ( len(startUrl) > 1):
+        cur.execute('''Insert or ignore into Webs (url) values (?)  ''', (web,))
+        cur.execute('''Insert or ignore into Pages (url, html, new_rank) values (?, Null,1.0 )''',(startUrl,))
+        conn.commit()
