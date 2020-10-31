@@ -30,4 +30,16 @@ row = cur.fetchone()
 if row is not None:
     print("ReStarting Crawl: or Delete spider.sqlite to start fresh crawl")
 else:
-    
+    startUrl = input("Enter Url or Press Enter for default Url")
+    if len(startUrl) < 1: startUrl = 'http://www.dr-chuck.com/'
+    if startUrl.endswith('/'): startUrl = startUrl[:-1]
+
+    web = startUrl
+
+    """ Using  rfind() to get rid of html / htm files as we are concerned with links not html files """
+    # https://www.geeksforgeeks.org/python-string-rfind/ Documentation of rfind()
+    # https://python-data.dr-chuck.net/known_by_tamarah.html check using this example html page
+    if startUrl.endswith('.html') or startUrl.endswith('.htm'):
+        pos = startUrl.rfind('/')
+        web = startUrl[:pos]
+    print(web)
