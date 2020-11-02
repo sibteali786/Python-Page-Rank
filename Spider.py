@@ -49,3 +49,37 @@ else:
         cur.execute('''Insert or ignore into Webs (url) values (?)  ''', (web,))
         cur.execute('''Insert or ignore into Pages (url, html, new_rank) values (?, Null,1.0 )''',(startUrl,))
         conn.commit()
+
+cur.execute('''select url from Webs''')
+webs = list()
+for row in cur:
+   webs.append(str(row[0]))
+
+print(webs)
+
+# How many pages to get for a current given Web
+many = 0
+
+while True:
+
+    if ( many < 1 ):
+        sVal = input("How many Pages to get: ")
+
+        if (len(sVal) < 1): break
+        many = int(sVal)
+
+    many = many - 1
+    cur.execute('''select id, url from Pages where html is null and error is null ORDER BY Random() LIMIT 1''')
+    try:
+        row = cur.fetchone()
+        # print row
+        fromid = row[0]
+        url = row[1]
+    except:
+        print('No unretrieved HTML pages found')
+        many = 0
+        break
+
+    print(fromid, url, end=' ')
+
+
