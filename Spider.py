@@ -117,7 +117,8 @@ while True:
     except KeyboardInterrupt:
         print("KeyboardInterrupt")
         break
-    except:
+    except Exception as e:
+        print(str(e))
         print("Unable to retrieve or parse page")
         cur.execute('UPDATE Pages SET error=-1 WHERE url=?', (url,))
         conn.commit()
@@ -127,6 +128,60 @@ while True:
     cur.execute('''Update Pages Set html = ? where url = ?''',(memoryview(html), url))
     conn.commit()
 
+    # Retreiving All anchor tags
+    tags = soup('a')
+    count = 0
+    for tag in tags:
+        '''https://www.geeksforgeeks.org/get-method-dictionaries-python/
+        For understanding working of get() method '''
+        href = tag.get('href', None)
+        '''https://www.w3schools.com/tags/att_a_href.asp
+        href documentation in html'''
+        if (href is None ): continue
+        # Resolve relative references like href="/contact" so as to only pick actual absolute url
+        splitted_url = urlparse(href)
+
+        '''https://stackoverflow.com/questions/21687408/how-to-remove-scheme-from-url-in-python
+        For dealing with schemes of the url'''
+        # Since if an url has no scheme like https/http then we would go to https page if we click on it which is good
+        # we are still in need of an absolute url as here we might not be on same page when we are retrieving that page.
+        if (len(splitted_url.scheme) < 1):
+            href = urljoin(url, href)
+        ''' href has Link to an element with a specified id within the page (like href="#section2")'''
+        element_in_page = href.find('#')
+        if (element_in_page > 1): href = href[:element_in_page]
+        # For dealing with links to images/videos and any other things
+        if( href.endswith('.png') or href.endswith('.jpg') or href.endswith('.gif') ): continue
+        if (href.endswith('/')): href = href[:-1]
+
+        print(href)
+
+        if (len(href) < 1): continue
+
+        # Checking if current url is already in the retrieved web urls or not
+        found = False
+        for web in webs:
+            if (href.startswith(web)):
+                found = True
+                break
+        if not found: continue
+        cur.execute('''Insert or ignore into Pages (url, html, new_rank) Values (? , Null, 1.0)''',(href,))
+        count += 1
+        conn.commit()
+
+        cur.execute('SELECT id FROM Pages WHERE url=? LIMIT 1', (href,))
+        try:
+            row = cur.fetchone()
+            toid = row[0]
+        except:
+            print('Could not retrieve id')
+            continue
+        # print fromid, toid
+        cur.execute('INSERT OR IGNORE INTO Links (from_id, to_id) VALUES ( ?, ? )', (fromid, toid))
+
+    print(count)
+
+cur.close()
 
 
 
