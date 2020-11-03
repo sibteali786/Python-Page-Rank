@@ -82,4 +82,54 @@ while True:
 
     print(fromid, url, end=' ')
 
+    try:
+        '''https://www.geeksforgeeks.org/python-urllib-module/
+        Check Documentation for urllib module'''
+        document = urlopen(url, context= ctx)
+        html = document.read()
+        # https://stackoverflow.com/questions/1726402/in-python-how-do-i-use-urllib-to-see-if-a-website-is-404-or-200
+        '''
+            The getcode() method (Added in python2.6) returns the HTTP status code that was sent with the response, or None if the URL is no HTTP URL.
+
+            >>> a=urllib.urlopen('http://www.google.com/asdfsf')
+            >>> a.getcode()
+            404
+            >>> a=urllib.urlopen('http://www.google.com/')
+            >>> a.getcode()
+            200
+            '''
+        if document.getcode() != 200:
+            print("Error on Page: ",document.getcode())
+            cur.execute('UPDATE Pages SET error=? WHERE url=?', (document.getcode(), url))
+        '''https://stackoverflow.com/questions/12474406/python-how-to-get-the-content-type-of-an-url/36882727
+        use for learning how info.get_content_type() works'''
+        if 'text/html' != document.info().get_content_type():
+            print("Ignore non text/html page")
+            cur.execute('''Delete from Pages where url = ?''', (url,))
+            conn.commit()
+            continue
+        print('('+"Size of html page received: ", str(len(html)) + ')')
+
+        soup = BeautifulSoup(html, 'html.parser')
+        '''https://www.geeksforgeeks.org/implementing-web-scraping-python-beautiful-soup/
+        Documentation and working of Beautiful Soup'''
+
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt")
+        break
+    except:
+        print("Unable to retrieve or parse page")
+        cur.execute('UPDATE Pages SET error=-1 WHERE url=?', (url,))
+        conn.commit()
+        continue
+    print(url)
+    cur.execute('''Insert or ignore into Pages (url, html , new_rank) Values (?, NULL, 1.0)''',(url,))
+    cur.execute('''Update Pages Set html = ? where url = ?''',(memoryview(html), url))
+    conn.commit()
+
+
+
+
+
+
 
