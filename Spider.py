@@ -30,7 +30,7 @@ row = cur.fetchone()
 if row is not None:
     print("ReStarting Crawl: or Delete spider.sqlite to start fresh crawl")
 else:
-    startUrl = input("Enter Url or Press Enter for default Url")
+    startUrl = input("Enter Url or Press Enter for default Url: ")
     if len(startUrl) < 1: startUrl = 'http://www.dr-chuck.com/'
     if startUrl.endswith('/'): startUrl = startUrl[:-1]
 
