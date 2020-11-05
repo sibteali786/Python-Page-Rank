@@ -28,3 +28,19 @@ for row in cur:
     if to_id not in from_ids: continue
     links.append(row)
     if to_id not in to_ids: to_ids.append(to_id)
+
+# Collect latest Page ranks of strong Component/Links using Page rank Algorithm
+prev_ranks = dict()
+for node in from_ids:
+    cur.execute('''Select new_rank from Pages where id = ?''',(node,))
+    row = cur.fetchone()
+    prev_ranks[node] = row[0]
+
+sval = input('How many iterations: ')
+many = 1
+if (len(sval) > 0 ): many = int(sval)
+
+# checking if prev_ranks dict got thing to rank or is empty
+if len(prev_ranks) < 1:
+    print('Nothing to Rank, Check Data/ Run Spider.py to crawl web Pages')
+    quit()
