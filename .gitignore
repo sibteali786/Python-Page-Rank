@@ -1,3 +1,4 @@
 *.txt 
 *.directory
 *.sqlite
+*.ipynb_checkpoints
