@@ -13,3 +13,7 @@ its web page.
 
 **Spdump.py** fetches data from Data Base and displays it in a mannered form for better understaning.
 **spreset.py** is used to reset the Ranking done by *Sprank.py* so as to restart the process. 
+
+The jupyter-notebook File **Visualizaion.ipynb** is used for the purpose of Visulaizing the results of Ranking obtained from
+Spider.py and Sprank.py 
+We can also visalize it using html, css and *d3.js a javascript library* for better visualization.
