@@ -17,3 +17,8 @@ its web page.
 The jupyter-notebook File **Visualizaion.ipynb** is used for the purpose of Visulaizing the results of Ranking obtained from
 Spider.py and Sprank.py 
 We can also visalize it using html, css and *d3.js a javascript library* for better visualization.
+
+## Prequisites for running 
+Must have **Beautifulsoup** installed on working directory of the project. Also **Plotly and Cufflinks** are a must libraries 
+for getting visualization in *jupyter_notebooks*.
+
